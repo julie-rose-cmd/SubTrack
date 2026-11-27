@@ -1,4 +1,4 @@
-import PaymentSuccessNotice from "../(components)/payment-success-notice";
+import PaymentSuccessNotice from "../../(components)/payment-success-notice";
 
 type PaymentSuccessSearchParams = Promise<{
   [key: string]: string | string[] | undefined;
@@ -20,6 +20,8 @@ export default async function PaymentSuccessPage({
       amount={getParam("amount")}
       assessments={getParam("assessments")}
       date={getParam("date")}
+      household={getParam("household")}
+      homeowner={getParam("homeowner")}
       method={getParam("method")}
       receipt={getParam("receipt")}
     />

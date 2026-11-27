@@ -1,14 +1,12 @@
 "use client";
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  LayoutGrid, Home, FileText, Car, BarChart2, 
-  ShieldCheck, LogOut, Lock, Calendar, Copy, 
-  Home as HomeIcon, Car as CarIcon, ChevronRight
+  Home, Car, BarChart2,
+  Lock, Calendar, Copy, ChevronRight
 } from 'lucide-react';
 
-export default function AdministratorOverview() {
+export default function AdministratorDashboard() {
   const router = useRouter();
 
   // TEMPORARY PLACEHOLDER DATA
@@ -38,80 +36,11 @@ export default function AdministratorOverview() {
   const collectionPercentage = ((mockDashboardData.collectedThisMonth / mockDashboardData.assessedTotal) * 100).toFixed(1);
   const totalHouseholds = mockDashboardData.registeredCurrent + mockDashboardData.registeredPending;
   const totalParkingOccupied = mockDashboardData.parkingVacant + mockDashboardData.parkingUnassigned; 
-  const totalParkingSlots = 6; 
-
-  const handleSignOut = () => {
-    router.push('/');
-  };
-
+  const totalParkingSlots = 6;
   return (
     <div className="min-h-screen bg-[#f9f9f9] flex font-[Arial]">
       
-      {/* SIDEBAR */}
-      <div className="w-64 bg-[#2d2d2d] text-[#f9f9f9] flex flex-col justify-between h-screen sticky top-0 shrink-0">
-        <div>
-          <div className="p-6 flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#ff8c00] rounded flex items-center justify-center">
-              <span className="text-[#2d2d2d] font-bold text-base">S</span>
-            </div>
-            <div>
-              <div className="text-base font-bold">SineGANG</div>
-              <div className="text-sm text-gray-400">HOMEOWNERS ASSN.</div>
-            </div>
-          </div>
-
-          <div className="px-6 py-2 text-sm text-gray-400 mt-2">ADMINISTRATOR PORTAL</div>
-          
-          <nav className="mt-2 flex flex-col gap-1 px-4">
-            <button onClick={() => router.push('/admin/overview')} className="flex items-center gap-3 px-4 py-3 bg-[#1e1e1e] rounded-lg border-l-4 border-[#ff8c00] text-[#ff8c00] cursor-pointer">
-              <LayoutGrid size={18} />
-              <span className="text-base font-bold">Overview</span>
-            </button>
-            <button onClick={() => router.push('/admin/households')} className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors cursor-pointer w-full">
-              <Home size={18} />
-              <span className="text-base">Households</span>
-            </button>
-            <button onClick={() => router.push('/admin/assessments')} className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors cursor-pointer w-full">
-              <Calendar size={18} />
-              <span className="text-base">Assessments</span>
-            </button>
-            <button onClick={() => router.push('/admin/parking')} className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors cursor-pointer w-full">
-              <Car size={18} />
-              <span className="text-base">Parking inventory</span>
-            </button>
-            <button onClick={() => router.push('/admin/reports')} className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors cursor-pointer w-full">
-              <BarChart2 size={18} />
-              <span className="text-base">Reports</span>
-            </button>
-          </nav>
-        </div>
-
-        <div className="p-4">
-          <div className="bg-[#1e1e1e] p-4 rounded-lg mb-4 border border-[#3d3d3d]">
-            <ShieldCheck size={20} className="text-[#ff8c00] mb-2" />
-            <div className="text-base font-bold text-[#f9f9f9]">Assigned administrator</div>
-            <div className="text-sm text-gray-400 mt-1">Board-authorized access to community records.</div>
-          </div>
-          
-          <div className="flex items-center justify-between border-t border-[#3d3d3d] pt-4 px-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#3d3d3d] rounded-full flex items-center justify-center text-sm">JL</div>
-              <div>
-                <div className="text-sm font-bold">Vince Adrian</div>
-                <div className="text-sm text-gray-400">Administrator</div>
-              </div>
-            </div>
-          </div>
-          <button 
-            onClick={handleSignOut}
-            type="button" 
-            className="group flex items-center gap-2 text-sm text-gray-400 px-2 pt-4 transition-colors cursor-pointer"
-          >
-            <LogOut size={16} className="group-hover:text-[#ff8c00] transition-colors" /> 
-            <span className="group-hover:text-white transition-colors">Sign out</span>
-          </button>
-        </div>
-      </div>
+      
 
       {/* MAIN CONTENT */}
       <div className="flex-1 text-[#2d2d2d] overflow-y-auto">
@@ -140,7 +69,7 @@ export default function AdministratorOverview() {
               <p className="text-base text-gray-600">October collections and payment-driven parking, reconciled at one snapshot.</p>
             </div>
             <button 
-              onClick={() => router.push('/admin/reports')}
+              onClick={() => router.push('/admin/board-reports')}
               type="button" 
               className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 px-4 py-2 rounded-lg text-base font-bold shadow-sm transition-colors cursor-pointer"
             >
@@ -159,7 +88,7 @@ export default function AdministratorOverview() {
           {/* 4 Summary Cards - Now Interactive */}
           <div className="grid grid-cols-4 gap-4 mb-8">
             <div 
-              onClick={() => router.push('/admin/reports')}
+              onClick={() => router.push('/admin/board-reports')}
               className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm cursor-pointer hover:border-[#ff8c00] hover:shadow-md transition-all group"
             >
               <div className="flex justify-between items-start mb-2">
@@ -171,7 +100,7 @@ export default function AdministratorOverview() {
             </div>
             
             <div 
-              onClick={() => router.push('/admin/reports')}
+              onClick={() => router.push('/admin/board-reports')}
               className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm cursor-pointer hover:border-[#ff8c00] hover:shadow-md transition-all group"
             >
               <div className="flex justify-between items-start mb-2">
@@ -188,19 +117,19 @@ export default function AdministratorOverview() {
             >
               <div className="flex justify-between items-start mb-2">
                 <div className="text-sm text-gray-500 group-hover:text-[#ff8c00] transition-colors">Registered households</div>
-                <HomeIcon size={16} className="text-gray-400 group-hover:text-[#ff8c00] transition-colors" />
+                <Home size={16} className="text-gray-400 group-hover:text-[#ff8c00] transition-colors" />
               </div>
               <div className="text-2xl font-bold mb-2">{totalHouseholds} / {totalHouseholds}</div>
               <div className="text-sm text-gray-500">{mockDashboardData.registeredCurrent} current · {mockDashboardData.registeredPending} payment pending</div>
             </div>
             
             <div 
-              onClick={() => router.push('/admin/parking')}
+              onClick={() => router.push('/admin/parking-inventory')}
               className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm cursor-pointer hover:border-[#ff8c00] hover:shadow-md transition-all group"
             >
               <div className="flex justify-between items-start mb-2">
                 <div className="text-sm text-gray-500 group-hover:text-[#ff8c00] transition-colors">Parking occupied</div>
-                <CarIcon size={16} className="text-gray-400 group-hover:text-[#ff8c00] transition-colors" />
+                <Car size={16} className="text-gray-400 group-hover:text-[#ff8c00] transition-colors" />
               </div>
               <div className="text-2xl font-bold mb-2">{totalParkingOccupied} / {totalParkingSlots}</div>
               <div className="text-sm text-gray-500">{mockDashboardData.parkingVacant} vacant · {mockDashboardData.parkingUnassigned} unassigned</div>
@@ -247,7 +176,7 @@ export default function AdministratorOverview() {
                 <div className="flex justify-between items-center mb-4">
                   <div className="text-base font-bold">{mockDashboardData.paymentExceptionsCount} payment exceptions</div>
                   <button 
-                    onClick={() => router.push('/admin/parking')}
+                    onClick={() => router.push('/admin/parking-inventory')}
                     type="button" 
                     className="px-4 py-1 text-sm font-bold border border-[#ff8c00] text-[#ff8c00] rounded-full hover:bg-[#fff4e5] transition-colors cursor-pointer"
                   >
@@ -262,7 +191,7 @@ export default function AdministratorOverview() {
                 </p>
               </div>
               <button 
-                onClick={() => router.push('/admin/parking')}
+                onClick={() => router.push('/admin/parking-inventory')}
                 type="button" 
                 className="text-sm font-bold flex items-center mt-4 hover:text-[#ff8c00] transition-colors cursor-pointer w-fit"
               >
@@ -276,7 +205,7 @@ export default function AdministratorOverview() {
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
               <div className="text-base font-bold">Recent simulated collections</div>
               <button 
-                onClick={() => router.push('/admin/reports')}
+                onClick={() => router.push('/admin/board-reports')}
                 type="button" 
                 className="text-sm font-bold flex items-center hover:text-[#ff8c00] transition-colors cursor-pointer"
               >
@@ -331,3 +260,15 @@ export default function AdministratorOverview() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+

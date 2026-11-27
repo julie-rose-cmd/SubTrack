@@ -4,18 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Banknote,
-  Building2,
-  Check,
-  CheckCircle2,
-  Clock3,
-  CreditCard,
-  LockKeyhole,
-  QrCode,
-  ShieldCheck,
-  WalletCards,
+  ArrowLeft, ArrowRight, Banknote, Check, CheckCircle2, Clock3, CreditCard,
+  LockKeyhole, QrCode,
 } from "lucide-react";
 
 type Assessment = {
@@ -138,10 +128,18 @@ function DemoQrCode() {
   );
 }
 
-export default function PaymentCheckoutCard() {
+export default function PaymentCheckoutCard({
+  selectedAssessmentIds,
+}: {
+  selectedAssessmentIds?: string[];
+}) {
   const router = useRouter();
-  const [selectedIds, setSelectedIds] = useState(
-    assessments.map((assessment) => assessment.id),
+  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
+    selectedAssessmentIds === undefined
+      ? assessments.map((assessment) => assessment.id)
+      : assessments
+          .filter((assessment) => selectedAssessmentIds.includes(assessment.id))
+          .map((assessment) => assessment.id),
   );
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("qr");
   const [hasReviewed, setHasReviewed] = useState(false);
@@ -155,6 +153,7 @@ export default function PaymentCheckoutCard() {
     () => selectedAssessments.reduce((sum, assessment) => sum + assessment.amount, 0),
     [selectedAssessments],
   );
+  const outstandingBalance = assessments.reduce((sum, assessment) => sum + assessment.amount, 0);
   const canSubmit = selectedAssessments.length > 0 && hasReviewed && !isSubmitting;
 
   function toggleAssessment(id: string) {
@@ -170,7 +169,7 @@ export default function PaymentCheckoutCard() {
     if (!canSubmit) return;
 
     setIsSubmitting(true);
-    const receipt = `ST-${Date.now().toString().slice(-8)}`;
+    const receipt = `ST-${Date.now().toString().slice(-8).padStart(8, "0")}`;
     const transactionDate = new Date().toISOString();
     const query = new URLSearchParams({
       amount: total.toFixed(2),
@@ -178,64 +177,19 @@ export default function PaymentCheckoutCard() {
       receipt,
       assessments: selectedAssessments.map((assessment) => assessment.name).join(", "),
       date: transactionDate,
+      homeowner: "Adrian Lleva",
+      household: "A-101",
+      status: "Completed · Simulation",
     });
 
     window.setTimeout(() => {
-      router.push(`/payment-success?${query.toString()}`);
+      router.push(`/homeowner/payment-success?${query.toString()}`);
     }, 700);
   }
 
   return (
     <div className="min-h-screen bg-[#f7f7f6] text-[#292927]">
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-60 flex-col bg-[#292a29] px-4 py-6 text-white lg:flex">
-        <Link className="mb-10 flex items-center gap-3 px-1" href="/">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-[#252525]">
-            <Building2 size={22} />
-          </span>
-          <span>
-            <span className="block text-sm font-bold tracking-wide">SineGANG</span>
-            <span className="block text-[10px] uppercase tracking-wider text-neutral-400">
-              Homeowners Assn.
-            </span>
-          </span>
-        </Link>
-
-        <p className="mb-3 px-2 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
-          Homeowner portal
-        </p>
-        <nav aria-label="Homeowner portal" className="space-y-1">
-          <Link
-            className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-neutral-400 transition hover:bg-white/5 hover:text-white"
-            href="/"
-          >
-            <WalletCards size={17} />
-            Overview
-          </Link>
-          <Link
-            aria-current="page"
-            className="flex items-center gap-3 rounded-lg border-l-2 border-amber-500 bg-white/5 px-3 py-3 text-sm text-white"
-            href="/"
-          >
-            <CreditCard size={17} className="text-amber-500" />
-            Payments
-          </Link>
-        </nav>
-
-        <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-          <ShieldCheck className="mb-3 text-amber-500" size={18} />
-          <p className="text-xs font-semibold">Your household only</p>
-          <p className="mt-1 text-[11px] leading-relaxed text-neutral-400">
-            Statements and payments for household A-101.
-          </p>
-        </div>
-
-        <div className="mt-auto border-t border-white/10 pt-4">
-          <p className="text-xs font-medium">Adrian Lleva</p>
-          <p className="mt-1 text-[11px] text-neutral-400">A-101 · Homeowner</p>
-        </div>
-      </aside>
-
-      <div className="lg:pl-60">
+      <div className="min-w-0">
         <header className="flex h-[60px] items-center justify-between border-b border-neutral-200 bg-white px-5 sm:px-8">
           <div className="flex items-center gap-2 text-xs text-neutral-500">
             <span className="font-medium text-neutral-700">SineGANG</span>
@@ -254,7 +208,7 @@ export default function PaymentCheckoutCard() {
         <main className="mx-auto max-w-[1180px] px-5 py-8 sm:px-8 sm:py-10">
           <Link
             className="mb-6 inline-flex items-center gap-2 text-xs font-medium text-neutral-500 transition hover:text-neutral-900"
-            href="/"
+            href="/homeowner/statement-of-account"
           >
             <ArrowLeft size={14} />
             Back to portal
@@ -442,14 +396,14 @@ export default function PaymentCheckoutCard() {
               <p className="mt-5 text-[10px] font-medium uppercase tracking-wide text-neutral-500">
                 Paying for
               </p>
-              <p className="mt-1 text-sm font-semibold">Maya Bennett · A-101</p>
+              <p className="mt-1 text-sm font-semibold">Adrian Lleva · A-101</p>
               <p className="mt-1 text-[11px] text-neutral-500">SOA-A101-202610</p>
 
               <div className="my-5 border-t border-neutral-100" />
               <dl className="space-y-4 text-xs">
                 <div className="flex justify-between gap-3 text-neutral-500">
-                  <dt>Prior balance</dt>
-                  <dd className="font-medium text-neutral-800">{peso.format(120)}</dd>
+                  <dt>Current balance</dt>
+                  <dd className="font-medium text-neutral-800">{peso.format(outstandingBalance)}</dd>
                 </div>
                 <div className="flex justify-between gap-3 text-neutral-500">
                   <dt>Selected assessments</dt>
@@ -469,7 +423,7 @@ export default function PaymentCheckoutCard() {
               <div className="mt-3 flex justify-between text-[11px] text-neutral-500">
                 <span>Balance after payment</span>
                 <span className="font-medium text-neutral-700">
-                  {peso.format(Math.max(0, 120 - total))}
+                  {peso.format(Math.max(0, outstandingBalance - total))}
                 </span>
               </div>
 
@@ -510,7 +464,7 @@ export default function PaymentCheckoutCard() {
               </button>
               <Link
                 className="mt-2 flex w-full items-center justify-center rounded-lg border border-neutral-200 px-4 py-3 text-xs font-medium text-neutral-700 transition hover:bg-neutral-50"
-                href="/"
+                href="/homeowner/statement-of-account"
               >
                 Cancel · Back to portal
               </Link>
@@ -530,3 +484,6 @@ export default function PaymentCheckoutCard() {
     </div>
   );
 }
+
+
+

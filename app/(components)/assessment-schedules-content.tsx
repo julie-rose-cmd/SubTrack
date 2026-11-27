@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BarChart3, Building2, CalendarDays, ChevronRight, CircleHelp, LayoutDashboard, LogOut, Plus, ShieldCheck, UsersRound } from "lucide-react";
+import { ChevronRight, CircleHelp, Plus } from "lucide-react";
 import { AssessmentScheduleFormModal } from "./assessment-schedule-form-modal";
 import { AssessmentScheduleSummary } from "./assessment-schedule-summary";
 import { AssessmentScheduleTable } from "./assessment-schedule-table";
@@ -26,14 +26,7 @@ function initialSchedules(): AssessmentSchedule[] {
   ];
 }
 
-const navigation = [
-  { label: "Overview", icon: LayoutDashboard },
-  { label: "Households", icon: UsersRound },
-  { label: "Assessments", icon: CalendarDays, active: true },
-  { label: "Reports", icon: BarChart3 },
-];
-
-export function AssessmentSchedulesDashboard() {
+export function AssessmentSchedulesContent() {
   const [schedules, setSchedules] = useState<AssessmentSchedule[]>(initialSchedules);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<AssessmentStatus | "All statuses">("All statuses");
@@ -83,45 +76,9 @@ export function AssessmentSchedulesDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f7f8fa] text-slate-900">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col bg-[#292a2c] text-white lg:flex">
-        <div className="flex h-[76px] items-center gap-3 border-b border-white/10 px-6">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white">
-            <Building2 size={21} aria-hidden="true" />
-          </span>
-          <div>
-            <p className="text-sm font-bold tracking-wide">SubTrack</p>
-            <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Homeowners association</p>
-          </div>
-        </div>
-        <div className="px-4 pt-7">
-          <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Administrator portal</p>
-          <nav className="mt-3 space-y-1" aria-label="Administrator navigation">
-            {navigation.map(({ label, icon: Icon, active }) => (
-              <div key={label} aria-current={active ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${active ? "bg-white/10 font-semibold text-white shadow-inner" : "text-slate-400"}`}>
-                <Icon size={17} className={active ? "text-orange-400" : "text-slate-500"} aria-hidden="true" />
-                {label}
-                {active && <ChevronRight size={14} className="ml-auto text-slate-500" aria-hidden="true" />}
-              </div>
-            ))}
-          </nav>
-        </div>
-        <div className="mt-auto border-t border-white/10 p-4">
-          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-700 text-xs font-bold">AD</span>
-            <div className="min-w-0">
-              <p className="truncate text-xs font-semibold">Administrator</p>
-              <p className="mt-0.5 text-[11px] text-slate-400">Board-authorized access</p>
-            </div>
-            <ShieldCheck size={16} className="ml-auto shrink-0 text-emerald-400" aria-hidden="true" />
-          </div>
-          <div className="mt-3 flex items-center gap-2 px-3 py-2 text-xs text-slate-500">
-            <LogOut size={14} aria-hidden="true" />
-            Secure administration
-          </div>
-        </div>
-      </aside>
+      
 
-      <div className="lg:pl-64">
+      <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-10 flex h-[68px] items-center justify-between border-b border-slate-200 bg-white/90 px-5 backdrop-blur-md sm:px-8">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <span className="font-medium text-slate-700">SubTrack</span>
@@ -191,3 +148,6 @@ export function AssessmentSchedulesDashboard() {
     </div>
   );
 }
+
+
+

@@ -23,8 +23,8 @@ const household = {
   court: "Maple Court",
   id: "HH-001",
   owner: "Adrian Lleva",
-  greetingName: "Lleva",
-  email: "maya.bennett@example.com",
+  greetingName: "Adrian",
+  email: "adrian.lleva@example.com",
   account: "Registered",
   cycle: "Monthly",
   period: "October 2026",
@@ -264,7 +264,7 @@ export default function HomeownerOverviewPage() {
               {/* Payment action */}
               <div className="mt-5 border-t border-neutral-200 pt-4">
                 {hasOutstandingBalance ? (
-                  <Link href="/homeowner/payment" className={primaryButton}>
+                  <Link href="/homeowner/payment-checkout?assessments=hoa-dues%2Cparking" className={primaryButton}>
                     <ArrowRight size={16} aria-hidden="true" />
                     Payment
                   </Link>
@@ -499,3 +499,5 @@ export default function HomeownerOverviewPage() {
     </main>
   );
 }
+
+

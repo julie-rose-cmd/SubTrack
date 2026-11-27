@@ -1,14 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  LayoutGrid, Home, Calendar, Car, BarChart2, 
-  ShieldCheck, LogOut, Lock, ChevronRight,
-  Search, ChevronDown, Plus, ExternalLink, Edit2, Trash2, X,
-  ChevronLeft
-} from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ChevronRight,
+  Search,
+  ChevronDown,
+  Plus,
+  ExternalLink,
+  Edit2,
+  Trash2,
+  X,
+  ChevronLeft,
+  Lock,
+} from "lucide-react";
 
+const createdHouseholdsStorageKey = "subtrack:admin:created-households";
 export default function HouseholdDirectory() {
   const router = useRouter();
 
@@ -37,6 +44,7 @@ export default function HouseholdDirectory() {
   }
 
   const [households, setHouseholds] = useState(initialHouseholds);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All statuses');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -46,6 +54,25 @@ export default function HouseholdDirectory() {
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(createdHouseholdsStorageKey);
+      if (!stored) return;
+
+      const created: unknown = JSON.parse(stored);
+      if (!Array.isArray(created) || created.length === 0) return;
+
+      setHouseholds((current) => [
+        ...created,
+        ...current.filter((row) => !created.some((item) => item.id === row.id)),
+      ]);
+      setSearchQuery(String(created[0].unit ?? ""));
+      setCurrentPage(1);
+    } catch {
+      // Ignore invalid local demo data and keep the seeded directory.
+    }
+  }, []);
 
   // 2. FILTER & SORT LOGIC
   const filteredHouseholds = households.filter(row => {
@@ -118,79 +145,10 @@ export default function HouseholdDirectory() {
   const handleNavigateToSetup = () => {
     router.push('/admin/households/setup');
   };
-
-  const handleSignOut = () => {
-    router.push('/');
-  };
-
-  return (
+return (
     <div className="min-h-screen bg-[#f9f9f9] flex font-[Arial]">
       
-      {/* SIDEBAR */}
-      <div className="w-64 bg-[#2d2d2d] text-[#f9f9f9] flex flex-col justify-between h-screen sticky top-0 shrink-0">
-        <div>
-          <div className="p-6 flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#ff8c00] rounded flex items-center justify-center">
-              <span className="text-[#2d2d2d] font-bold text-base">S</span>
-            </div>
-            <div>
-              <div className="text-base font-bold">SineGANG</div>
-              <div className="text-sm text-gray-400">HOMEOWNERS ASSN.</div>
-            </div>
-          </div>
-
-          <div className="px-6 py-2 text-sm text-gray-400 mt-2">ADMINISTRATOR PORTAL</div>
-          
-          <nav className="mt-2 flex flex-col gap-1 px-4">
-            <a href="/admin/overview" className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors">
-              <LayoutGrid size={18} />
-              <span className="text-base">Overview</span>
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-3 bg-[#1e1e1e] rounded-lg border-l-4 border-[#ff8c00] text-[#ff8c00]">
-              <Home size={18} />
-              <span className="text-base font-bold">Households</span>
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors">
-              <Calendar size={18} />
-              <span className="text-base">Assessments</span>
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors">
-              <Car size={18} />
-              <span className="text-base">Parking inventory</span>
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-3 text-gray-300 border-l-4 border-transparent hover:text-[#ff8c00] rounded-lg transition-colors">
-              <BarChart2 size={18} />
-              <span className="text-base">Reports</span>
-            </a>
-          </nav>
-        </div>
-
-        <div className="p-4">
-          <div className="bg-[#1e1e1e] p-4 rounded-lg mb-4 border border-[#3d3d3d]">
-            <ShieldCheck size={20} className="text-[#ff8c00] mb-2" />
-            <div className="text-base font-bold text-[#f9f9f9]">Assigned administrator</div>
-            <div className="text-sm text-gray-400 mt-1">Board-authorized access to community records.</div>
-          </div>
-          
-          <div className="flex items-center justify-between border-t border-[#3d3d3d] pt-4 px-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#3d3d3d] rounded-full flex items-center justify-center text-sm">JL</div>
-              <div>
-                <div className="text-sm font-bold">Vince Adrian</div>
-                <div className="text-sm text-gray-400">Administrator</div>
-              </div>
-            </div>
-          </div>
-          <button 
-            onClick={handleSignOut}
-            type="button" 
-            className="group flex items-center gap-2 text-sm text-gray-400 px-2 pt-4 transition-colors cursor-pointer"
-          >
-            <LogOut size={16} className="group-hover:text-[#ff8c00] transition-colors" /> 
-            <span className="group-hover:text-white transition-colors">Sign out</span>
-          </button>
-        </div>
-      </div>
+      
 
       {/* MAIN CONTENT */}
       <div className="flex-1 text-[#2d2d2d] overflow-y-auto min-w-0">
@@ -498,3 +456,9 @@ export default function HouseholdDirectory() {
     </div>
   );
 }
+
+
+
+
+
+

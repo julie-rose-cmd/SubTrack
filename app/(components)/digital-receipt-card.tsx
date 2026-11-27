@@ -38,7 +38,7 @@ export default function DigitalReceiptCard({
 }: DigitalReceiptCardProps) {
   const amountValue = Number(amountParam);
   const amount =
-    Number.isFinite(amountValue) && amountValue >= 0 ? amountValue : null;
+    Number.isFinite(amountValue) && amountValue > 0 ? amountValue : null;
   const transactionDate = dateParam ? new Date(dateParam) : null;
   const reference =
     receiptParam && /^ST-\d{8}$/.test(receiptParam) ? receiptParam : null;
@@ -80,10 +80,10 @@ export default function DigitalReceiptCard({
           </p>
           <Link
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2.5 text-xs font-semibold text-neutral-950 transition hover:bg-amber-400"
-            href="/"
+            href="/homeowner/statement-of-account"
           >
             <ArrowLeft size={14} />
-            Return to checkout
+            Return to statement
           </Link>
         </section>
       </main>
@@ -96,7 +96,7 @@ export default function DigitalReceiptCard({
         <div className="print-hidden mb-6 flex flex-wrap items-center justify-between gap-3">
           <Link
             className="inline-flex items-center gap-2 text-xs font-medium text-neutral-600 transition hover:text-neutral-950"
-            href="/"
+            href="/homeowner/payment-checkout"
           >
             <ArrowLeft size={14} />
             Back to checkout
@@ -233,3 +233,5 @@ export default function DigitalReceiptCard({
     </main>
   );
 }
+
+

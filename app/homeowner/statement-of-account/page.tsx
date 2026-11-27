@@ -600,7 +600,7 @@ export default function HomeownerStatementOfAccountPage() {
 
             <div className="xl:justify-self-end print:hidden">
               {isCurrentStatement && hasOutstandingBalance && (
-                <Link href="/homeowner/payment" className={primaryButton}>
+                <Link href="/homeowner/payment-checkout?assessments=hoa-dues%2Cparking" className={primaryButton}>
                   <ArrowRight size={16} aria-hidden="true" />
                   {peso.format(ledger.closingBalance)} payment
                 </Link>
@@ -673,3 +673,4 @@ export default function HomeownerStatementOfAccountPage() {
     </main>
   );
 }
+

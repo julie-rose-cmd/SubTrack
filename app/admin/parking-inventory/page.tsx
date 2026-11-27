@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+
 import {
-  ArrowRight, BarChart3, Building2, CalendarDays, Car, ChevronRight, Download,
-  UsersRound, LayoutDashboard, CircleHelp, Plus, RefreshCw, ShieldCheck,
-  CircleCheck, CircleAlert, SquareParking, LogOut, Search,
+  ArrowRight, Car, ChevronRight, CircleAlert, CircleCheck, CircleHelp,
+  Download, Plus, RefreshCw, Search, SquareParking,
 } from "lucide-react";
 import { ReportSummaryCard } from "../../(components)/report-summary-card";
 
@@ -226,47 +225,35 @@ function ParkingInventoryDashboard() {
   );
 }
 
-const navigation = [
-  { label: "Overview", href: "/admin/overview", icon: LayoutDashboard },
-  { label: "Households", href: "/admin/households", icon: UsersRound },
-  { label: "Assessments", href: "/assessment-schedules", icon: CalendarDays },
-  { label: "Parking inventory", href: "/admin/parking", icon: Car },
-  { label: "Reports", href: "/board-reports", icon: BarChart3 },
-];
-
 export default function AdminParkingPage() {
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-slate-900 lg:flex">
-      <aside className="flex shrink-0 flex-col bg-[#272727] text-white lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:overflow-y-auto">
-        <div className="flex h-[76px] items-center gap-3 border-b border-white/10 px-6">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500 text-white"><Building2 size={21} aria-hidden="true" /></span>
-          <div><p className="text-sm font-bold tracking-wide">SubTrack</p><p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Homeowners association</p></div>
-        </div>
-        <div className="px-4 pb-4 pt-5 lg:pt-7">
-          <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">Administrator portal</p>
-          <nav aria-label="Administrator navigation" className="mt-3 flex flex-wrap gap-1 lg:flex-col">
-            {navigation.map(({ label, href, icon: Icon }) => {
-              const active = href === "/admin/parking";
-              return <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-orange-400 ${active ? "bg-white/10 font-semibold text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}><Icon size={17} className={active ? "text-orange-400" : "text-slate-400"} aria-hidden="true" />{label}{active && <ChevronRight size={14} className="ml-auto hidden text-slate-400 lg:block" aria-hidden="true" />}</Link>;
-            })}
-          </nav>
-        </div>
-        <div className="mt-auto hidden border-t border-white/10 p-4 lg:block">
-          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-bold">AD</span>
-            <div className="min-w-0"><p className="text-xs font-semibold">Administrator</p><p className="mt-0.5 text-[11px] text-slate-400">Board-authorized access</p></div>
-            <ShieldCheck size={16} className="ml-auto shrink-0 text-emerald-400" aria-hidden="true" />
-          </div>
-          <div className="mt-3 flex items-center gap-2 px-3 py-2 text-xs text-slate-400"><LogOut size={14} aria-hidden="true" />Demonstration session</div>
-        </div>
-      </aside>
+    <div className="min-h-screen bg-[#f5f6f8] text-slate-900">
+      
       <div className="min-w-0 flex-1">
         <header className="flex min-h-[68px] flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3 sm:px-8 lg:sticky lg:top-0 lg:z-10">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500"><span className="font-medium text-slate-700">SubTrack</span><ChevronRight size={14} aria-hidden="true" /><span>Administration</span><ChevronRight size={14} aria-hidden="true" /><span className="font-semibold text-slate-800">Parking inventory</span></div>
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500"><span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">Demonstration data</span><span title="Demo records only"><CircleHelp size={17} aria-hidden="true" /><span className="sr-only">Demo records only</span></span></div>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+            <span className="font-medium text-slate-700">SubTrack</span>
+            <ChevronRight size={14} aria-hidden="true" />
+            <span>Administration</span>
+            <ChevronRight size={14} aria-hidden="true" />
+            <span className="font-semibold text-slate-800">Parking inventory</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
+              Demonstration data
+            </span>
+            <span title="Demo records only">
+              <CircleHelp size={17} aria-hidden="true" />
+              <span className="sr-only">Demo records only</span>
+            </span>
+          </div>
         </header>
         <ParkingInventoryDashboard />
       </div>
     </div>
   );
 }
+
+
+
+

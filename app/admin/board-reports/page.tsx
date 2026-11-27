@@ -1,76 +1,20 @@
 "use client";
 
 import {
-  ArrowDownRight,
-  ArrowUpRight,
-  CarFront,
-  CircleDollarSign,
-  Clock3,
-  CreditCard,
-  Download,
-  FileBarChart2,
-  LayoutDashboard,
-  MapPin,
-  ReceiptText,
-  UsersRound,
+  ArrowDownRight, ArrowUpRight, CarFront, CircleDollarSign, Clock3, CreditCard,
+  Download, FileBarChart2, MapPin, ReceiptText,
 } from "lucide-react";
-import { CollectionsChart } from "../(components)/collections-chart";
-import { ParkingUtilization } from "../(components)/parking-utilization";
-import { PaymentTransactions } from "../(components)/payment-transactions";
-import { ReportSummaryCard } from "../(components)/report-summary-card";
-
-const navigation = [
-  { label: "Overview", icon: LayoutDashboard },
-  { label: "Payments", icon: CreditCard },
-  { label: "Residents", icon: UsersRound },
-  { label: "Parking", icon: CarFront },
-];
+import { CollectionsChart } from "../../(components)/collections-chart";
+import { ParkingUtilization } from "../../(components)/parking-utilization";
+import { PaymentTransactions } from "../../(components)/payment-transactions";
+import { ReportSummaryCard } from "../../(components)/report-summary-card";
 
 export default function BoardReportsPage() {
   return (
     <main className="min-h-screen bg-[#f6f6f6] text-slate-900">
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col bg-[#2c2c2c] text-white lg:flex">
-      <div className="flex h-20 items-center gap-3 border-b border-white/10 px-7">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f28c00] text-white">
-            <FileBarChart2 size={21} strokeWidth={2.2} />
-          </span>
-          <div>
-            <p className="text-lg font-semibold tracking-tight">SubTrack</p>
-            <p className="text-[10px] font-medium uppercase tracking-[.18em] text-slate-400">Community portal</p>
-          </div>
-        </div>
-        <div className="px-4 pt-8">
-          <p className="px-3 text-[10px] font-semibold uppercase tracking-[.16em] text-slate-500">Workspace</p>
-          <nav className="mt-3 space-y-1" aria-label="Main navigation">
-            {navigation.map(({ label, icon: Icon }, index) => (
-              <a
-                key={label}
-                href="#"
-                aria-current={index === 0 ? "page" : undefined}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
-                  index === 0
-                    ? "border-l-2 border-[#f28c00] bg-white/10 text-white"
-                    : "text-slate-400 transition hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <Icon size={18} strokeWidth={1.8} />
-                {label}
-              </a>
-            ))}
-          </nav>
-        </div>
-        <div className="mt-auto border-t border-white/10 p-5">
-          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f28c00] text-xs font-bold text-white">JD</div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">Jordan Davis</p>
-              <p className="text-xs text-slate-400">Board administrator</p>
-            </div>
-          </div>
-        </div>
-      </aside>
+    
 
-      <div className="lg:pl-64">
+      <div className="min-w-0 flex-1">
         <header className="flex h-20 items-center justify-between border-b border-white/10 bg-[#2c2c2c] px-5 text-white sm:px-8 lg:px-10">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f28c00] text-white lg:hidden">
@@ -208,3 +152,7 @@ export default function BoardReportsPage() {
     </main>
   );
 }
+
+
+
+
