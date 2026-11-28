@@ -5,86 +5,51 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, UserRoundPlus } from "lucide-react";
 
-type HouseholdRecord = {
-  id: string;
-  unit: string;
-  building: string;
-  resident: string;
-  contact: string;
-  balance: number;
-  status: "Current";
-  slot: string;
-};
-
-const storageKey = "subtrack:admin:created-households";
-const seededUnits = new Set([
-  "A-101",
-  "A-102",
-  "A-103",
-  "B-201",
-  "B-202",
-  "B-203",
-  ...Array.from({ length: 39 }, (_, index) => `C-${307 + index}`),
-]);
-
 export default function CreateHouseholdPage() {
   const router = useRouter();
   const [unit, setUnit] = useState("");
   const [building, setBuilding] = useState("");
   const [resident, setResident] = useState("");
-  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [slot, setSlot] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
 
-    const normalizedUnit = unit.trim().toUpperCase();
-    if (!/^[A-Z]{1,2}-\d{2,4}$/.test(normalizedUnit)) {
-      setError("Enter a unit such as A-104 or C-346.");
-      return;
-    }
-
-    let created: HouseholdRecord[] = [];
+    setIsSubmitting(true);
     try {
-      const stored = localStorage.getItem(storageKey);
-      const parsed: unknown = stored ? JSON.parse(stored) : [];
-      if (Array.isArray(parsed)) created = parsed as HouseholdRecord[];
+      const response = await fetch("/api/admin/households", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ unit, building, resident, email, password, slot }),
+      });
+      const result = await response.json();
+
+      if (response.status === 401) {
+        router.replace("/");
+        return;
+      }
+
+      if (!response.ok) {
+        setError(result.error ?? "Could not create the household.");
+        return;
+      }
+
+      const createdUnit = String(result.household.unit ?? unit).toUpperCase();
+      router.push(`/admin/households?created=${encodeURIComponent(createdUnit)}`);
     } catch {
-      setError("Saved demo household data could not be read. Please try again.");
-      return;
-    }
-
-    const alreadyExists =
-      seededUnits.has(normalizedUnit) ||
-      created.some((household) => household.unit.toUpperCase() === normalizedUnit);
-    if (alreadyExists) {
-      setError("A household is already registered for this unit.");
-      return;
-    }
-
-    const newHousehold: HouseholdRecord = {
-      id: `created-${Date.now()}`,
-      unit: normalizedUnit,
-      building: building.trim(),
-      resident: resident.trim(),
-      contact: contact.trim().toLowerCase(),
-      balance: 0,
-      status: "Current",
-      slot: slot.trim().toUpperCase() || "—",
-    };
-
-    try {
-      localStorage.setItem(storageKey, JSON.stringify([newHousehold, ...created]));
-      router.push("/admin/households");
-    } catch {
-      setError("This household could not be saved in this browser. Please try again.");
+      setError("Could not reach the server. Check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -113,7 +78,7 @@ export default function CreateHouseholdPage() {
               </p>
               <h1 className="mt-1 text-2xl font-semibold tracking-tight">Create household</h1>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                Add a household record and its primary resident contact.
+                Create the household record and a Supabase Auth sign-in for its homeowner.
               </p>
             </div>
           </div>
@@ -158,15 +123,15 @@ export default function CreateHouseholdPage() {
                 <input
                   autoComplete="email"
                   className={fieldClass}
-                  onChange={(event) => setContact(event.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="resident@example.com"
                   required
                   type="email"
-                  value={contact}
+                  value={email}
                 />
               </label>
               <label className="block text-sm font-medium">
-                Password <span className="text-orange-700">*</span>
+                Temporary password <span className="text-orange-700">*</span>
                 <input
                   autoComplete="new-password"
                   className={fieldClass}
@@ -177,8 +142,11 @@ export default function CreateHouseholdPage() {
                   type="password"
                   value={password}
                 />
+                <span className="mt-1.5 block text-xs font-normal text-slate-500">
+                  Supabase Auth stores the credential securely; this app never saves the raw password.
+                </span>
               </label>
-              <label className="block text-sm font-medium sm:col-span-2">
+              <label className="block text-sm font-medium">
                 Parking slot <span className="font-normal text-slate-400">(optional)</span>
                 <input
                   className={fieldClass}
@@ -186,9 +154,6 @@ export default function CreateHouseholdPage() {
                   placeholder="P-07"
                   value={slot}
                 />
-                <span className="mt-1.5 block text-xs font-normal text-slate-500">
-                  Leave blank if no slot is allocated.
-                </span>
               </label>
             </div>
 
@@ -202,23 +167,17 @@ export default function CreateHouseholdPage() {
                 Cancel
               </Link>
               <button
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isSubmitting}
                 type="submit"
               >
                 <UserRoundPlus size={16} aria-hidden="true" />
-                Create household
+                {isSubmitting ? "Creating account…" : "Create household"}
               </button>
             </div>
           </form>
-
-          <p className="mt-5 rounded-xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-500">
-            This demo saves household details in this browser only. Passwords are not stored; connect account authentication to create a real sign-in.
-          </p>
         </div>
       </div>
     </main>
   );
 }
-
-
-

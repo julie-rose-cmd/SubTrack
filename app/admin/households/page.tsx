@@ -15,7 +15,17 @@ import {
   Lock,
 } from "lucide-react";
 
-const createdHouseholdsStorageKey = "subtrack:admin:created-households";
+type HouseholdRow = {
+  id: string;
+  unit: string;
+  building: string;
+  resident: string;
+  contact: string;
+  balance: number;
+  status: string;
+  slot: string;
+};
+
 export default function HouseholdDirectory() {
   const router = useRouter();
 
@@ -43,36 +53,81 @@ export default function HouseholdDirectory() {
     });
   }
 
-  const [households, setHouseholds] = useState(initialHouseholds);
+  const [households, setHouseholds] = useState<HouseholdRow[]>(initialHouseholds);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All statuses');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState<any>(null);
+  const [editForm, setEditForm] = useState<HouseholdRow | null>(null);
+  const [loadError, setLoadError] = useState("");
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(createdHouseholdsStorageKey);
-      if (!stored) return;
+    let cancelled = false;
 
-      const created: unknown = JSON.parse(stored);
-      if (!Array.isArray(created) || created.length === 0) return;
+    async function loadHouseholds() {
+      const createdUnit = new URLSearchParams(window.location.search).get("created");
+      if (createdUnit) {
+        setSearchQuery(createdUnit);
+        setCurrentPage(1);
+      }
 
-      setHouseholds((current) => [
-        ...created,
-        ...current.filter((row) => !created.some((item) => item.id === row.id)),
-      ]);
-      setSearchQuery(String(created[0].unit ?? ""));
-      setCurrentPage(1);
-    } catch {
-      // Ignore invalid local demo data and keep the seeded directory.
+      try {
+        const response = await fetch("/api/admin/households");
+        if (cancelled) return;
+        if (response.status === 401) {
+          router.replace("/");
+          return;
+        }
+        if (!response.ok) {
+          const result = await response.json().catch(() => null);
+          throw new Error(result?.error ?? "Could not load households.");
+        }
+        setLoadError("");
+
+        const result = await response.json();
+        const databaseHouseholds = (result.households ?? []).map((item: {
+          id: string;
+          unit: string;
+          building: string;
+          resident_name: string;
+          email: string;
+          balance: number | string;
+          status: string;
+          parking_slot: string | null;
+        }) => ({
+          id: item.id,
+          unit: item.unit,
+          building: item.building,
+          resident: item.resident_name,
+          contact: item.email,
+          balance: Number(item.balance),
+          status: item.status,
+          slot: item.parking_slot ?? "—",
+        }));
+
+        setHouseholds((current) => [
+          ...databaseHouseholds,
+          ...current.filter((row) => !databaseHouseholds.some((item: { unit: string }) => item.unit.toLowerCase() === row.unit.toLowerCase())),
+        ]);
+      } catch (loadError) {
+        if (!cancelled) {
+          setLoadError(loadError instanceof Error ? loadError.message : "Could not load households from Supabase.");
+        }
+        // Keep the seeded demonstration records visible if the database is unavailable.
+      }
     }
-  }, []);
+
+    void loadHouseholds();
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+
 
   // 2. FILTER & SORT LOGIC
   const filteredHouseholds = households.filter(row => {
@@ -112,13 +167,13 @@ export default function HouseholdDirectory() {
   const handleRowClick = (id: string) => {
     setSelectedId(id);
     if (isEditing) {
-      setEditForm(households.find(r => r.id === id));
+      setEditForm(households.find(r => r.id === id) ?? null);
     }
   };
 
   const handleEditClick = () => {
     if (selectedId) {
-      setEditForm(households.find(r => r.id === selectedId));
+      setEditForm(households.find(r => r.id === selectedId) ?? null);
       setIsEditing(true);
     }
   };
@@ -132,6 +187,7 @@ export default function HouseholdDirectory() {
   };
 
   const handleSaveEdit = () => {
+    if (!editForm) return;
     setHouseholds(households.map(r => r.id === editForm.id ? editForm : r));
     setIsEditing(false);
   };
@@ -184,6 +240,12 @@ return (
               <Plus size={18} /> Create household
             </button>
           </div>
+
+          {loadError && (
+            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950" role="alert">
+              <strong>Supabase household data did not load.</strong> {loadError} The directory is currently showing demonstration records.
+            </div>
+          )}
 
           <div className="flex justify-between items-center text-sm text-gray-500 mb-8">
             <div className="flex items-center gap-2">
@@ -432,7 +494,7 @@ return (
                 </div>
 
                 <div className="text-sm text-gray-500 mb-6">
-                  Saving updates the unit profile and linked contact. It does not edit posted assessments or change the resident's role.
+                  Saving updates the unit profile and linked contact. It does not edit posted assessments or change the resident&apos;s role.
                 </div>
 
                 <button 
@@ -456,6 +518,8 @@ return (
     </div>
   );
 }
+
+
 
 
 

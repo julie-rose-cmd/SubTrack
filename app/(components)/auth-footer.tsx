@@ -7,7 +7,7 @@ export const AuthFooter: React.FC = () => {
       <div className="space-y-1">
         <p className="font-medium text-gray-700 text-[12px]">Need an account? Ask the HOA office for an invitation.</p>
         <p className="text-[11px] text-gray-400 leading-relaxed">
-          Administrator access is assigned by an authorized board administrator. This design does not connect to a live sign-in service.
+          Sign in with the email and password for your Supabase account. Administrator access is assigned by the HOA office.
         </p>
       </div>
 

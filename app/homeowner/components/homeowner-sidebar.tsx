@@ -17,6 +17,16 @@ export default function HomeownerSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  async function handleSignOut() {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Clear the current view even if the logout request cannot reach the server.
+    }
+    router.replace("/");
+    router.refresh();
+  }
+
   return (
     <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col justify-between bg-[#2d2d2d] text-[#f9f9f9]">
       <div>
@@ -79,7 +89,7 @@ export default function HomeownerSidebar() {
         </div>
         <button
           type="button"
-          onClick={() => router.push("/")}
+          onClick={handleSignOut}
           className="group flex cursor-pointer items-center gap-2 px-2 pt-4 text-sm text-gray-400 transition-colors"
         >
           <LogOut size={16} className="transition-colors group-hover:text-[#ff8c00]" />
@@ -89,6 +99,8 @@ export default function HomeownerSidebar() {
     </aside>
   );
 }
+
+
 
 
 
